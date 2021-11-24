@@ -1,0 +1,2 @@
+(library (name fuzzy_match) (public_name fuzzy_match)
+ (libraries core_kernel.core) (preprocess (pps ppx_jane)))
