@@ -15,7 +15,7 @@ depends: [
   "ppx_jane"
   "dune"     {>= "2.0.0"}
 ]
-synopsis: "A library for fuzzy string matching"
+synopsis: "Libraries for fuzzy string matching"
 description: "
-A library for fuzzy string matching
+Libraries for fuzzy string matching
 "
