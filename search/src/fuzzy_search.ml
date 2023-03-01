@@ -91,36 +91,42 @@ let fold_matching_indices_single_query query ~item ~init ~f =
 ;;
 
 let matching_indices (query : Query.t) ~item =
-  let indices =
-    Array.fold query.queries ~init:Int.Set.empty ~f:(fun set query ->
-      fold_matching_indices_single_query query ~item ~init:set ~f:Set.add)
-  in
-  if Set.is_empty indices then None else Some (Set.to_array indices)
+  if Query.is_empty query
+  then Some [||]
+  else (
+    let indices =
+      Array.fold query.queries ~init:Int.Set.empty ~f:(fun set query ->
+        fold_matching_indices_single_query query ~item ~init:set ~f:Set.add)
+    in
+    if Set.is_empty indices then None else Some (Set.to_array indices))
 ;;
 
 let split_by_matching_sections (query : Query.t) ~item =
-  let%map.Option matches = matching_indices query ~item in
-  let sections = Queue.create () in
-  let add_section matching start end_inclusive =
-    Queue.enqueue
-      sections
-      (matching, String.sub item ~pos:start ~len:(end_inclusive - start + 1))
-  in
-  let first = matches.(0) in
-  if first > 0 then add_section `Not_matching 0 (first - 1);
-  let matching_range_start = ref first in
-  let matching_range_end = ref first in
-  Array.iter matches ~f:(fun idx ->
-    if idx > !matching_range_end + 1
-    then (
-      add_section `Matching !matching_range_start !matching_range_end;
-      add_section `Not_matching (!matching_range_end + 1) (idx - 1);
-      matching_range_start := idx);
-    matching_range_end := idx);
-  add_section `Matching !matching_range_start !matching_range_end;
-  if !matching_range_end < String.length item - 1
-  then add_section `Not_matching (!matching_range_end + 1) (String.length item - 1);
-  Queue.to_list sections
+  match matching_indices query ~item with
+  | None -> None
+  | Some [||] -> Some [ `Not_matching, item ]
+  | Some matches ->
+    let sections = Queue.create () in
+    let add_section matching start end_inclusive =
+      Queue.enqueue
+        sections
+        (matching, String.sub item ~pos:start ~len:(end_inclusive - start + 1))
+    in
+    let first = matches.(0) in
+    if first > 0 then add_section `Not_matching 0 (first - 1);
+    let matching_range_start = ref first in
+    let matching_range_end = ref first in
+    Array.iter matches ~f:(fun idx ->
+      if idx > !matching_range_end + 1
+      then (
+        add_section `Matching !matching_range_start !matching_range_end;
+        add_section `Not_matching (!matching_range_end + 1) (idx - 1);
+        matching_range_start := idx);
+      matching_range_end := idx);
+    add_section `Matching !matching_range_start !matching_range_end;
+    if !matching_range_end < String.length item - 1
+    then add_section `Not_matching (!matching_range_end + 1) (String.length item - 1);
+    Some (Queue.to_list sections)
 ;;
 
 module Char_class = struct
