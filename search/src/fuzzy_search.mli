@@ -20,32 +20,32 @@ end
 
     {[
       # open Fuzzy_search;;
-      # score (Query.create "foo") ~item:"bar"
+      # score (Query.create "foo") ~item:"bar";;
       - : int = 0
     ]}
 
     {[
-      # score (Query.create "abc") ~item:"bbb bbb bbb abc bbb"
+      # score (Query.create "abc") ~item:"bbb bbb bbb abc bbb";;
       - : int = 7
     ]}
 
     {[
-      # score (Query.create "abc") ~item:"zz   zabc   zz"
+      # score (Query.create "abc") ~item:"zz   zabc   zz";;
       - : int = 967
     ]}
 
     {[
-      # score (Query.create "abc") ~item:"__a__b__c__"
+      # score (Query.create "abc") ~item:"__a__b__c__";;
       - : int = 1447
     ]}
 
     {[
-      # score (Query.create "ghi abc") ~item:"abc def ghi jkl"
+      # score (Query.create "ghi abc") ~item:"abc def ghi jkl";;
       - : int = 969
     ]}
 
     {[
-      # score (Query.create "ghi pqr") ~item:"abc def ghi jkl"
+      # score (Query.create "ghi pqr") ~item:"abc def ghi jkl";;
       - : int = 0
     ]}
 *)
@@ -57,17 +57,17 @@ val score_opt : Query.t -> item:string -> int option
 (** If the query exists in the item returns the sorted and deduped indices of some fuzzy match.
 
     {[
-      # matching_indices (Query.create "abc") ~item:"a__abb____c_c"
+      # matching_indices (Query.create "abc") ~item:"a__abb____c_c";;
       - : int array option = Some [|3; 4; 10|]
     ]}
 
     {[
-      # matching_indices (Query.create "no_match") ~item:"can't match this"
+      # matching_indices (Query.create "no_match") ~item:"can't match this";;
       - : int array option = None
     ]}
 
     {[
-      # matching_indices (Query.create "abc ab") ~item:"a__abb____c_c"
+      # matching_indices (Query.create "abc ab") ~item:"a__abb____c_c";;
       - : int array option = Some [|3; 4; 10|]
     ]}
 *)
@@ -78,19 +78,19 @@ val matching_indices : Query.t -> item:string -> int array option
     Useful for highlighting queries in a UI.
 
     {[
-      # split_by_matching_sections (Query.create "foo" ) ~item:"foo bar baz"
+      # split_by_matching_sections (Query.create "foo" ) ~item:"foo bar baz";;
       - : ([ `Matching | `Not_matching ] * string) list option =
       Some [(`Matching, "foo"); (`Not_matching, " bar baz")]
     ]}
 
     {[
-      # split_by_matching_sections (Query.create "abc" ) ~item:"____abc____"
+      # split_by_matching_sections (Query.create "abc" ) ~item:"____abc____";;
       - : ([ `Matching | `Not_matching ] * string) list option =
       Some [(`Not_matching, "____"); (`Matching, "abc"); (`Not_matching, "____")]
     ]}
 
     {[
-      # split_by_matching_sections  (Query.create "a ab" ) ~item:"a b"
+      # split_by_matching_sections  (Query.create "a ab" ) ~item:"a b";;
       - : ([ `Matching | `Not_matching ] * string) list option =
       Some [(`Matching, "a"); (`Not_matching, " "); (`Matching, "b")]
     ]}
