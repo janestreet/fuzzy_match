@@ -1,2 +1,6 @@
-(library (name fuzzy_match) (public_name fuzzy_match.match) (libraries core)
- (preprocess (pps ppx_jane)))
+(library
+ (name fuzzy_match)
+ (public_name fuzzy_match.match)
+ (libraries core)
+ (preprocess
+  (pps ppx_jane)))
