@@ -13,9 +13,9 @@ end
       in the query. This is similar to 'smart case' behaviour in fzf except that fzf
       requires an exact case match when there is any uppercase character and we just apply
       a score deduction.
-    - Queries are split into sub patterns delimited by
-      spaces. All sub patterns must match the item and their scores are combined. This is
-      the default behaviour in fzf called extended mode.
+    - Queries are split into sub patterns delimited by spaces. All sub patterns must match
+      the item and their scores are combined. This is the default behaviour in fzf called
+      extended mode.
     - Scores are non-negative, lower scores are better, 0 means omit the result.
 
     {[
@@ -32,14 +32,13 @@ end
       - : int = 969
       # score (Query.create "ghi pqr") ~item:"abc def ghi jkl";;
       - : int = 0
-    ]}
-*)
+    ]} *)
 val score : Query.t -> item:string -> int
 
 (** Same as [score] but returns an option when the pattern doesn't match instead of 0. *)
 val score_opt : Query.t -> item:string -> int option
 
-(** Highest possible score for a given query  *)
+(** Highest possible score for a given query *)
 val score_upper_bound : query_length:int -> int
 
 (** If the query exists in the item returns the sorted and deduped indices of some fuzzy
@@ -52,8 +51,7 @@ val score_upper_bound : query_length:int -> int
       - : int array option = None
       # matching_indices (Query.create "abc ab") ~item:"a__abb____c_c";;
       - : int array option = Some [|3; 4; 10|]
-    ]}
-*)
+    ]} *)
 val matching_indices : Query.t -> item:string -> int array option
 
 (** Splits an item into contiguous sections that reflect the fuzzy matching.
@@ -70,8 +68,7 @@ val matching_indices : Query.t -> item:string -> int array option
       # split_by_matching_sections  (Query.create "a ab" ) ~item:"a b";;
       - : ([ `Matching | `Not_matching ] * string) list option =
       Some [(`Matching, "a"); (`Not_matching, " "); (`Matching, "b")]
-    ]}
-*)
+    ]} *)
 val split_by_matching_sections
   :  Query.t
   -> item:string
@@ -86,13 +83,13 @@ val split_by_matching_sections
       val items : string list = ["___abc___"; "aBc"; "Abc_defgh"; "abc"; "foof"]
       # search ~items (Query.create "abc");;
       - : string list = ["aBc"; "abc"; "Abc_defgh"; "___abc___"]
-    ]}
-*)
+    ]} *)
 val search : Query.t -> items:string list -> string list
 
 val search' : Query.t -> items:string array -> string array
 
 module For_testing : sig
-  (** When a match is found, returns [ Some (start, end) ] for word [ item[start..end-1] ]. *)
+  (** When a match is found, returns [ Some (start, end) ] for word
+      [ item[start..end-1] ]. *)
   val find_start_end_indices : query:string -> item:string -> unit -> (int * int) option
 end
