@@ -87,6 +87,7 @@ val split_by_matching_sections
 val search : Query.t -> items:string list -> string list
 
 val search' : Query.t -> items:string array -> string array
+val search_assoc : Query.t -> items:(string * 'a) list -> (string * 'a) list
 
 module For_testing : sig
   (** When a match is found, returns [ Some (start, end) ] for word

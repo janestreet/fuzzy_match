@@ -284,6 +284,17 @@ let search query ~items =
   |> List.map ~f:Tuple3.get3
 ;;
 
+let search_assoc query ~items =
+  List.filter_map items ~f:(fun (item, assoc) ->
+    match score query ~item with
+    | 0 -> None
+    | score ->
+      (* Tie break by shortest string first, then alphabetical. *)
+      Some (score, String.length item, item, assoc))
+  |> List.stable_sort ~compare:[%compare: int * int * string * _]
+  |> List.map ~f:(fun (_score, _length, item, assoc) -> item, assoc)
+;;
+
 let search' query ~items =
   let items_by_score =
     Array.filter_map items ~f:(fun item ->
