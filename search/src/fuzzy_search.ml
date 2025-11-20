@@ -29,7 +29,7 @@ module Query = struct
   let is_empty t = String.is_empty t.raw
 end
 
-(* [score] gets called a lot, so we want it to be zero-alloc. 
+(* [score] gets called a lot, so we want it to be zero-alloc.
 
    In native code, we can use [stack] allocations; however Js_of_ocaml doesn't support
    stack allocations and we need to use a global singleton value.
@@ -192,25 +192,25 @@ struct
   let continue_gap_penalty = 20
 
   (* Wrong case penalty is only used when there is at least one uppercase character so we
-   make it extreme *)
+     make it extreme *)
   let wrong_case_penalty = 120
   let first_char_multiplier = 2
 
   let score_upper_bound ~query_length =
     (* Only characters that are part of the query can have positive score. The maximum
-     positive score is when the first character of the query matches the first character
-     of the item and it is also the start of a word. *)
+       positive score is when the first character of the query matches the first character
+       of the item and it is also the start of a word. *)
     ((start_of_item_bonus + start_of_word_bonus) * first_char_multiplier * query_length)
     + 1
   ;;
 
   (* For a [single_score_query] higher scores are better and we take score_upper_bound -
-   score_single_query in score.
+     score_single_query in score.
 
-   Assumption:
-   - [query] and [item] are not empty.
-   - When there is no match, return 0. When the query is "" and item is not "" (infinitely
-     many matches?), return score upper bound.
+     Assumption:
+     - [query] and [item] are not empty.
+     - When there is no match, return 0. When the query is "" and item is not ""
+       (infinitely many matches?), return score upper bound.
   *)
   let score_single_query query ~item ~case_sensitive =
     match find_start_end_indices ~query ~item () with
