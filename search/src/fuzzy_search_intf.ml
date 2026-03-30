@@ -1,9 +1,10 @@
 open! Core
 
-module type Query = sig
-  type t [@@deriving equal]
+module type%template [@mode m = (local, global)] Query = sig
+  type t [@@deriving equal [@mode.explicit m]]
 
   val create : string -> t
+  val to_raw_string : t -> string
 end
 
 module type S = sig
