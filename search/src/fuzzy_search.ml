@@ -10,7 +10,7 @@ module Query = struct
     ; raw : string
     ; case_sensitive : bool
     }
-  [@@deriving equal]
+  [@@deriving equal ~localize]
 
   let create query =
     let queries =
@@ -27,6 +27,7 @@ module Query = struct
   ;;
 
   let is_empty t = String.is_empty t.raw
+  let to_raw_string t = t.raw
 end
 
 (* [score] gets called a lot, so we want it to be zero-alloc.
@@ -308,7 +309,7 @@ struct
       | score ->
         (* Tie break by shortest string first, then alphabetical. *)
         Some (score, String.length item, item))
-    |> List.sort ~compare:[%compare: int * int * string]
+    |> List.sort ~compare:([%compare: int * int * string] [@mode local])
     |> List.map ~f:Tuple3.get3
   ;;
 
@@ -319,7 +320,7 @@ struct
       | score ->
         (* Tie break by shortest string first, then alphabetical. *)
         Some (score, String.length item, item, assoc))
-    |> List.stable_sort ~compare:[%compare: int * int * string * _]
+    |> List.stable_sort ~compare:([%compare: int * int * string * _] [@mode local])
     |> List.map ~f:(fun (_score, _length, item, assoc) -> item, assoc)
   ;;
 
@@ -332,7 +333,7 @@ struct
           (* Tie break by shortest string first, then alphabetical. *)
           Some (score, String.length item, item))
     in
-    Array.sort items_by_score ~compare:[%compare: int * int * string];
+    Array.sort items_by_score ~compare:([%compare: int * int * string] [@mode local]);
     Array.map items_by_score ~f:Tuple3.get3
   ;;
 end

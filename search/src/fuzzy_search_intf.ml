@@ -1,9 +1,10 @@
 open! Core
 
-module type Query = sig
-  type t : immutable_data [@@deriving equal]
+module type%template [@mode m = (local, global)] Query = sig
+  type t : immutable_data [@@deriving equal [@mode.explicit m]]
 
   val create : string -> t
+  val to_raw_string : t -> string @@ portable
 end
 
 module type S = sig
